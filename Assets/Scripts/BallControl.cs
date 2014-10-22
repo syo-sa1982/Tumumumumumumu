@@ -22,19 +22,13 @@ public class BallControl : MonoBehaviour
 
 	void Awake()
 	{
-		int color_index = (int)Random.Range (0.0f,5.0f);
-		Debug.Log ("BallControl Awake");
-		Debug.Log (color_index);
+		int color_index = (int)Random.Range (0.0f,6.0f);
 		setColor ((Ball.COLOR)color_index);
 	}
 
 	// Use this for initialization
 	void Start () 
 	{
-//		GameObject ball = Instantiate (Resources.Load ("Prefabs/Ball"),new Vector3(0,5,0),Quaternion.identity) as GameObject;
-//		GameObject ball = Instantiate (Resources.Load ("Prefabs/Ball")) as GameObject;
-
-	
 	}
 	
 	// Update is called once per frame
@@ -45,8 +39,6 @@ public class BallControl : MonoBehaviour
 
 	public void setColor(Ball.COLOR color) 
 	{
-		Debug.Log (color);
-
 		this.color = color;
 
 		Color color_value;
