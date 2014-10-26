@@ -8,12 +8,20 @@ public class BallRoot : MonoBehaviour
 
 	public int ballNum;
 
-	// Use this for initialization
-	void Start () 
+	IEnumerator Start ()
 	{
 		PrepareBalls (ballNum);
+		while(true){
+
+			if (Input.GetMouseButton (0)) {
+				Debug.Log ("Pressed left click.");
+			}
+			yield return new WaitForSeconds(3.0f);
+
+			PrepareBalls (3);
+		}
 	}
-	
+
 	// Update is called once per frame
 	void Update () 
 	{
