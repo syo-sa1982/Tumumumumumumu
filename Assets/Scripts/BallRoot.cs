@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class BallRoot : MonoBehaviour 
+public class BallRoot : MonoBehaviour,ITap
 {
 
 	public GameObject ballPrefab;
+
+	private GameObject lastKeepBall;
+	List<GameObject> keepBalls = new List<GameObject>();
 
 	public int ballNum;
 
@@ -25,6 +29,9 @@ public class BallRoot : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		if (Input.GetMouseButtonDown (0)) {
+			Debug.Log ("GetMouseButtonDown");
+		}
 	}
 
 	/**
@@ -44,5 +51,21 @@ public class BallRoot : MonoBehaviour
 		// numberが０になるまで再帰
 		--number;
 		PrepareBalls (number);
+	}
+
+	/**
+	 * インターフェイスからの実装
+	 */
+	public void TapDown(ref RaycastHit hit)
+	{
+	}
+	public void TapUp(ref RaycastHit hit)
+	{
+	}
+
+
+	bool IsBall()
+	{
+		return false;
 	}
 }
