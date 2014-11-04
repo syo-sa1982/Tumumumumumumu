@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BallRoot : MonoBehaviour,ITap
+public class BallRoot : MonoBehaviour
 {
 
 	public GameObject ballPrefab;
@@ -12,25 +12,37 @@ public class BallRoot : MonoBehaviour,ITap
 
 	public int ballNum;
 
-	IEnumerator Start ()
+	void Start()
+	{
+		StartCoroutine ("PuzzleMake");
+	}
+
+	IEnumerator PuzzleMake ()
 	{
 		PrepareBalls (ballNum);
 		while(true){
 
-			if (Input.GetMouseButton (0)) {
-				Debug.Log ("Pressed left click.");
-			}
-			yield return new WaitForSeconds(3.0f);
+			yield return new WaitForSeconds(0f);
 
-			PrepareBalls (3);
 		}
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetMouseButtonDown (0)) {
-			Debug.Log ("GetMouseButtonDown");
+		// タッチされたとき
+		if(Input.GetMouseButtonDown(0)){
+
+			Debug.Log ("GetMouseButtonDown.");
+			OnTapDown ();
+		}
+
+		// 指を離したとき
+		if(Input.GetMouseButtonUp(0)){
+
+			Debug.Log ("GetMouseButtonUp.");
+			OnTapUp ();
+
 		}
 	}
 
@@ -53,19 +65,48 @@ public class BallRoot : MonoBehaviour,ITap
 		PrepareBalls (number);
 	}
 
+	private void OnTapDown()
+	{
+		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
+
+		Debug.Log(ray_position);
+	}
+
+	private void OnTapUp()
+	{
+		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
+
+		Debug.Log(ray_position);
+	}
+
 	/**
-	 * インターフェイスからの実装
+	 * チェックメソッド
 	 */
-	public void TapDown(ref RaycastHit hit)
+	bool IsBall(GameObject obj)
 	{
+		if (obj == null) {
+			return false;
+		}
+		return (obj.tag == "GreenBall" || obj.tag == "RedBall" || obj.tag == "BlueBall" || obj.tag == "PurpleBall" || obj.tag == "YellowBall");
 	}
-	public void TapUp(ref RaycastHit hit)
+
+	bool IsAvailableTag(GameObject obj)
 	{
+		if (obj == null) {
+			return false;
+		}
+		return (obj.tag == lastKeepBall.tag);
+	}
+
+	bool IsAvailableDistance(GameObject obj)
+	{
+		if (obj == null) {
+			return false;
+		}
+		float distance = Vector3.Distance(obj.transform.position, lastKeepBall.transform.position);
+		return distance < 1.0f;
 	}
 
 
-	bool IsBall()
-	{
-		return false;
-	}
+
 }
