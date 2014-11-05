@@ -4,17 +4,26 @@ using System.Collections.Generic;
 
 public class BallRoot : MonoBehaviour
 {
+	private const int LAYER_PUZZLE = 8;	// パズルのレイヤー
+	private const int MATCH_NUM	= 3;	// 3個以上で消える
+
 
 	public GameObject ballPrefab;
 
-	private GameObject lastKeepBall;
-	List<GameObject> keepBalls = new List<GameObject>();
+	private GameObject lastKeepBall; // 最後になぞったボール
+	List<GameObject> keepBalls = new List<GameObject>(); // なぞって消す候補
 
 	public int ballNum;
 
+	private bool isTaped = false; // タップ中かどうかの判定
+
+	// カウントダウン用
+	int waitingTime = 30;
+	private float timer;
+
 	void Start()
 	{
-		StartCoroutine ("PuzzleMake");
+		StartCoroutine (PuzzleMake());
 	}
 
 	IEnumerator PuzzleMake ()
@@ -22,7 +31,7 @@ public class BallRoot : MonoBehaviour
 		PrepareBalls (ballNum);
 		while(true){
 
-			yield return new WaitForSeconds(0f);
+			yield return new WaitForSeconds(1f);
 
 		}
 	}
@@ -30,6 +39,15 @@ public class BallRoot : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		Debug.Log (timer);
+
+		if (timer > waitingTime) {
+			//Action
+			Debug.Log ("時間切れ");
+
+		} else {
+			timer += Time.deltaTime;
+		}
 		// タッチされたとき
 		if(Input.GetMouseButtonDown(0)){
 
@@ -73,14 +91,29 @@ public class BallRoot : MonoBehaviour
 		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
 
 		Debug.Log(ray_position);
-	}
 
+		isTaped = true;
+
+
+
+
+	}
+		
+	/**
+	 * タップ終了
+	 */
 	private void OnTapUp()
 	{
 		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
 
 		Debug.Log(ray_position);
+
+
+		isTaped = false;
 	}
+
+
+
 
 	/**
 	 * チェックメソッド

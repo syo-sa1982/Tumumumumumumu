@@ -6,6 +6,20 @@ public class BallControl : MonoBehaviour
 	const string FILE_NAME = "Sprites/TumuYatsu";
 	const string SPRITE_NAME = "TumuYatsu_";
 
+
+	[SerializeField]
+	private int id = 0;
+
+//	public int PuzzleID {
+//		get
+//		{
+//			return id; 
+//		}
+//		private set {
+//			id = value;
+//		}
+//	}
+
 	// Use this for initialization
 	void Start () 
 	{
