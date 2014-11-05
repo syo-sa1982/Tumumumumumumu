@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BallRoot : MonoBehaviour
+public class BallRoot : MonoBehaviour,ITap
 {
 	private const int LAYER_PUZZLE = 8;	// パズルのレイヤー
 	private const int MATCH_NUM	= 3;	// 3個以上で消える
+
+	public float distance = 10; // Rayの届く距離
+
 
 
 	public GameObject ballPrefab;
@@ -39,7 +42,7 @@ public class BallRoot : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		Debug.Log (timer);
+//		Debug.Log (timer);
 
 		if (timer > waitingTime) {
 			//Action
@@ -52,7 +55,50 @@ public class BallRoot : MonoBehaviour
 		if(Input.GetMouseButtonDown(0)){
 
 			Debug.Log ("GetMouseButtonDown.");
-			OnTapDown ();
+
+			Debug.Log("OnTapDown");
+			//		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
+			//		RaycastHit2D hit = new RaycastHit2D();
+			//
+			//		Debug.Log(ray_position);
+			//
+			//		GameObject hitObject = hit.collider.gameObject;
+			//		if (IsBall(hitObject) && (lastKeepBall == null || (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
+			//		{
+			//
+			//			Debug.Log("############ ヒット ############");
+			//			lastKeepBall = hitObject;
+			//			keepBalls.Add(hitObject);
+			//		}
+			//
+			//		isTaped = true;
+
+
+			Vector3 aTapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
+
+			if (aCollider2d) {
+				GameObject obj = aCollider2d.transform.gameObject;
+				Debug.Log(obj.name);
+			}
+
+//			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+//			RaycastHit hit = new RaycastHit();
+//
+//
+//			Debug.Log(ray);
+//			Debug.Log (Physics.Raycast(ray, out hit));
+//
+//			// TODO rayの処理はどうしてるか明日確認。
+//
+//			if (Physics.Raycast(ray, out hit, distance)) {
+//				Debug.Log("OnTapDown22222");
+//				GameObject selectedGameObject = hit.collider.gameObject;
+//				ITap target = selectedGameObject.GetComponent(typeof(ITap)) as ITap;
+//				if(target != null){
+//					target.TapDown(ref hit);
+//				}
+//			}
 		}
 
 		// 指を離したとき
@@ -88,11 +134,7 @@ public class BallRoot : MonoBehaviour
 	 */
 	private void OnTapDown()
 	{
-		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
 
-		Debug.Log(ray_position);
-
-		isTaped = true;
 
 
 
@@ -113,7 +155,22 @@ public class BallRoot : MonoBehaviour
 	}
 
 
+	public void TapDown (ref RaycastHit hit){
 
+		Debug.Log("TapDown");
+		GameObject hitObject = hit.collider.gameObject;
+		if (IsBall(hitObject) && (lastKeepBall == null || (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
+		{
+
+			Debug.Log("############ ヒット ############");
+			lastKeepBall = hitObject;
+			keepBalls.Add(hitObject);
+		}
+	}
+
+	public void TapUp (ref RaycastHit hit){
+		// タップを離したときの処理
+	}
 
 	/**
 	 * チェックメソッド
