@@ -56,9 +56,27 @@ public class BallRoot : MonoBehaviour,ITap
 
 			Debug.Log ("GetMouseButtonDown.");
 
+			// Rayのレイヤー対象設定
+			int layerMask = 1 << LAYER_PUZZLE;
+			Debug.Log (layerMask);
+
 			Debug.Log("OnTapDown");
-			//		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
-			//		RaycastHit2D hit = new RaycastHit2D();
+					Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
+					RaycastHit2D hit = new RaycastHit2D();
+//			// Rayのレイヤー対象設定
+//			int layerMask = 1 << LAYER_PUZZLE;
+//
+//			// マウスポジションからRayを飛ばす座標を設定
+//			Vector3 ray_position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, -20));
+//
+//			// パズルを選択したかチェック
+//			RaycastHit2D hit_object = Physics2D.Raycast (ray_position, Vector3.forward, Mathf.Infinity, layerMask);
+//			// パズルと接触した場合
+//			if (hit_object.collider != null) 
+//			{
+//
+//			}
+
 			//
 			//		Debug.Log(ray_position);
 			//
