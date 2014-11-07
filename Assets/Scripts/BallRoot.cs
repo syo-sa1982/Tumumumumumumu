@@ -58,71 +58,23 @@ public class BallRoot : MonoBehaviour,ITap
 
 			// Rayのレイヤー対象設定
 			int layerMask = 1 << LAYER_PUZZLE;
-			Debug.Log (layerMask);
-
-			Debug.Log("OnTapDown");
-					Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
-					RaycastHit2D hit = new RaycastHit2D();
-//			// Rayのレイヤー対象設定
-//			int layerMask = 1 << LAYER_PUZZLE;
-//
-//			// マウスポジションからRayを飛ばす座標を設定
-//			Vector3 ray_position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, -20));
-//
-//			// パズルを選択したかチェック
-//			RaycastHit2D hit_object = Physics2D.Raycast (ray_position, Vector3.forward, Mathf.Infinity, layerMask);
-//			// パズルと接触した場合
-//			if (hit_object.collider != null) 
-//			{
-//
-//			}
-
-			//
-			//		Debug.Log(ray_position);
-			//
-			//		GameObject hitObject = hit.collider.gameObject;
-			//		if (IsBall(hitObject) && (lastKeepBall == null || (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
-			//		{
-			//
-			//			Debug.Log("############ ヒット ############");
-			//			lastKeepBall = hitObject;
-			//			keepBalls.Add(hitObject);
-			//		}
-			//
-			//		isTaped = true;
-
 
 			Vector3 aTapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
 
 			if (aCollider2d) {
+
+				isTaped = true;
 				GameObject obj = aCollider2d.transform.gameObject;
+				Debug.Log(obj.tag);
 				Debug.Log(obj.name);
 			}
-
-//			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-//			RaycastHit hit = new RaycastHit();
-//
-//
-//			Debug.Log(ray);
-//			Debug.Log (Physics.Raycast(ray, out hit));
-//
-//			// TODO rayの処理はどうしてるか明日確認。
-//
-//			if (Physics.Raycast(ray, out hit, distance)) {
-//				Debug.Log("OnTapDown22222");
-//				GameObject selectedGameObject = hit.collider.gameObject;
-//				ITap target = selectedGameObject.GetComponent(typeof(ITap)) as ITap;
-//				if(target != null){
-//					target.TapDown(ref hit);
-//				}
-//			}
 		}
 
 		// 指を離したとき
 		if(Input.GetMouseButtonUp(0)){
-
 			Debug.Log ("GetMouseButtonUp.");
+			isTaped = false;
 			OnTapUp ();
 
 		}

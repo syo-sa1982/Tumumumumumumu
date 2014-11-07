@@ -10,21 +10,27 @@ public class BallControl : MonoBehaviour
 	[SerializeField]
 	private int id = 0;
 
-//	public int PuzzleID {
-//		get
-//		{
-//			return id; 
-//		}
-//		private set {
-//			id = value;
-//		}
-//	}
+	public int PuzzleID {
+		get
+		{
+			return id; 
+		}
+		private set {
+			id = value;
+		}
+	}
 
 	// Use this for initialization
 	void Start () 
 	{
-		string name = SPRITE_NAME + Random.Range(0, 5);
-		Sprite sp = GetSprite(FILE_NAME, name);
+		string spriteName = SPRITE_NAME + Random.Range(0, 5);
+
+
+		// タグにも入れとく
+		print(gameObject.tag);
+//		gameObject.tag = spriteName;
+
+		Sprite sp = GetSprite(FILE_NAME, spriteName);
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();
 		sr.sprite = sp;
 	}
@@ -38,5 +44,10 @@ public class BallControl : MonoBehaviour
 	{
 		Sprite[] sprites = Resources.LoadAll<Sprite>(fileName);
 		return System.Array.Find<Sprite>(sprites, (sprite) => sprite.name.Equals(spriteName));
+	}
+
+	void TappedDestroy()
+	{
+		Destroy(gameObject);
 	}
 }
