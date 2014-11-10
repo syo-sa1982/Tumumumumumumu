@@ -4,8 +4,8 @@ using System.Collections;
 public interface ITap
 { 
 	// タッチしたときに呼ばれる。
-	void TapDown (ref RaycastHit hit);
+	void TapDown2D (ref RaycastHit2D hit);
 	// タッチを離したときに呼ばれる。
-	void TapUp(ref RaycastHit hit);
+	void TapUp2D(ref RaycastHit2D hit);
 }
 

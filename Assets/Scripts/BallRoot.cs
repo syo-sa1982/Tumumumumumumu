@@ -46,7 +46,7 @@ public class BallRoot : MonoBehaviour,ITap
 
 		if (timer > waitingTime) {
 			//Action
-			Debug.Log ("時間切れ");
+//			Debug.Log ("時間切れ");
 
 		} else {
 			timer += Time.deltaTime;
@@ -66,8 +66,10 @@ public class BallRoot : MonoBehaviour,ITap
 
 				isTaped = true;
 				GameObject obj = aCollider2d.transform.gameObject;
-				Debug.Log(obj.tag);
-				Debug.Log(obj.name);
+				RaycastHit2D hitObject = Physics2D.Raycast (aTapPoint, -Vector2.up);
+
+				TapDown2D (ref hitObject);
+
 			}
 		}
 
@@ -102,7 +104,7 @@ public class BallRoot : MonoBehaviour,ITap
 	/**
 	 * タップ開始
 	 */
-	private void OnTapDown()
+	private void OnTapDown(ref RaycastHit2D hit)
 	{
 
 
@@ -125,20 +127,31 @@ public class BallRoot : MonoBehaviour,ITap
 	}
 
 
-	public void TapDown (ref RaycastHit hit){
+	public void TapDown2D (ref RaycastHit2D hitObject)
+	{
 
 		Debug.Log("TapDown");
-		GameObject hitObject = hit.collider.gameObject;
-		if (IsBall(hitObject) && (lastKeepBall == null || (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
-		{
+
+		if (hitObject) {
 
 			Debug.Log("############ ヒット ############");
-			lastKeepBall = hitObject;
-			keepBalls.Add(hitObject);
+			Debug.Log("hit object is " + hitObject.collider.gameObject.name);
+			Debug.Log("hit PuzzleID is " + hitObject.collider.gameObject.GetComponent<BallControl>().PuzzleID);
+			lastKeepBall = hitObject.collider.gameObject;
+			keepBalls.Add(hitObject.collider.gameObject);
+
+			Debug.Log(lastKeepBall);
+			Debug.Log(keepBalls);
+
+
 		}
+
+//		if (IsBall(hitObject) && (lastKeepBall == null || (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
+//		{}
 	}
 
-	public void TapUp (ref RaycastHit hit){
+	public void TapUp2D (ref RaycastHit2D hit)
+	{
 		// タップを離したときの処理
 	}
 
@@ -150,6 +163,7 @@ public class BallRoot : MonoBehaviour,ITap
 		if (obj == null) {
 			return false;
 		}
+//		return (obj.tag == "GreenBall" || obj.tag == "RedBall" || obj.tag == "BlueBall" || obj.tag == "PurpleBall" || obj.tag == "YellowBall");
 		return (obj.tag == "GreenBall" || obj.tag == "RedBall" || obj.tag == "BlueBall" || obj.tag == "PurpleBall" || obj.tag == "YellowBall");
 	}
 

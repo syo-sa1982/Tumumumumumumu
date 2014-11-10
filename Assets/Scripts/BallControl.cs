@@ -8,27 +8,26 @@ public class BallControl : MonoBehaviour
 
 
 	[SerializeField]
-	private int id = 0;
+	private int spriteID = 0;
 
 	public int PuzzleID {
 		get
 		{
-			return id; 
+			return spriteID; 
 		}
 		private set {
-			id = value;
+			spriteID = value;
 		}
 	}
 
 	// Use this for initialization
 	void Start () 
 	{
-		string spriteName = SPRITE_NAME + Random.Range(0, 5);
+		this.PuzzleID = Random.Range (0, 5);
+		string spriteName = SPRITE_NAME + this.PuzzleID;
 
-
-		// タグにも入れとく
-		print(gameObject.tag);
-//		gameObject.tag = spriteName;
+		Debug.Log (this.PuzzleID);
+		Debug.Log (spriteName);
 
 		Sprite sp = GetSprite(FILE_NAME, spriteName);
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();
