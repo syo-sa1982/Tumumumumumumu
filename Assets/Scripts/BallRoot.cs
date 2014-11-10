@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BallRoot : MonoBehaviour,ITap
+public class BallRoot : MonoBehaviour
 {
 	private const int LAYER_PUZZLE = 8;	// パズルのレイヤー
 	private const int MATCH_NUM	= 3;	// 3個以上で消える
@@ -51,36 +51,18 @@ public class BallRoot : MonoBehaviour,ITap
 		} else {
 			timer += Time.deltaTime;
 		}
-		// タッチされたとき
+
 		if(Input.GetMouseButtonDown(0)){
-
-			Debug.Log ("GetMouseButtonDown.");
-
-			// Rayのレイヤー対象設定
-			int layerMask = 1 << LAYER_PUZZLE;
-
-			Vector3 aTapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
-
-			if (aCollider2d) {
-
-				isTaped = true;
-				GameObject obj = aCollider2d.transform.gameObject;
-				RaycastHit2D hitObject = Physics2D.Raycast (aTapPoint, -Vector2.up);
-
-				TapDown2D (ref hitObject);
-
-			}
+			OnTapDown();
 		}
-
-		// 指を離したとき
+		if(Input.GetMouseButton(0)){
+			OnTapDrag();
+		}
 		if(Input.GetMouseButtonUp(0)){
-			Debug.Log ("GetMouseButtonUp.");
-			isTaped = false;
-			OnTapUp ();
-
+			OnTapUp();
 		}
 	}
+
 
 	/**
 	 * ボールを生成
@@ -104,55 +86,81 @@ public class BallRoot : MonoBehaviour,ITap
 	/**
 	 * タップ開始
 	 */
-	private void OnTapDown(ref RaycastHit2D hit)
+	private void OnTapDown()
 	{
+		isTaped = true;
 
+		// Rayのレイヤー対象設定
+//		int layerMask = 1 << LAYER_PUZZLE;
 
+		Vector3 aTapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
 
+		if (aCollider2d) {
 
+			GameObject obj = aCollider2d.transform.gameObject;
+			RaycastHit2D hit = Physics2D.Raycast (aTapPoint, -Vector2.up);
+
+			AddHitObject (hit);
+			isTaped = true;
+		}
+	}
+	/**
+	 * タップドラッグ中
+	 */
+	private void OnTapDrag()
+	{
+		if (!isTaped) {return;}
+
+		Vector3 aTapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
+
+		if (aCollider2d) {
+
+			GameObject obj = aCollider2d.transform.gameObject;
+			RaycastHit2D hit = Physics2D.Raycast (aTapPoint, -Vector2.up);
+
+			AddHitObject (hit);
+		}
 
 	}
-		
+
 	/**
 	 * タップ終了
 	 */
 	private void OnTapUp()
 	{
-		Vector3 ray_position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, -20));
-
-		Debug.Log(ray_position);
-
-
+		Debug.Log("############ タップ終了 ############");
 		isTaped = false;
+		lastKeepBall = null;
+		keepBalls.Clear();
 	}
 
 
-	public void TapDown2D (ref RaycastHit2D hitObject)
+	public void AddHitObject (RaycastHit2D hit)
 	{
+		if (hit) {
+			GameObject hitObject = hit.collider.gameObject;
+			if (IsBall(hitObject) 
+				&& (lastKeepBall == null 
+					|| (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
+			{
 
-		Debug.Log("TapDown");
+				Debug.Log("############ ヒット ############");
+				Debug.Log("hit object is " + hitObject.GetInstanceID());
+				Debug.Log("hit PuzzleID is " + hitObject.GetComponent<BallControl>().PuzzleID);
 
-		if (hitObject) {
+				lastKeepBall = hitObject;
+				keepBalls.Add(hitObject);
 
-			Debug.Log("############ ヒット ############");
-			Debug.Log("hit object is " + hitObject.collider.gameObject.name);
-			Debug.Log("hit PuzzleID is " + hitObject.collider.gameObject.GetComponent<BallControl>().PuzzleID);
-			lastKeepBall = hitObject.collider.gameObject;
-			keepBalls.Add(hitObject.collider.gameObject);
+				Debug.Log("lastKeepBall is " + lastKeepBall);
+				Debug.Log("keepBalls is " + keepBalls.Count);
 
-			Debug.Log(lastKeepBall);
-			Debug.Log(keepBalls);
+			}
 
 
 		}
 
-//		if (IsBall(hitObject) && (lastKeepBall == null || (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
-//		{}
-	}
-
-	public void TapUp2D (ref RaycastHit2D hit)
-	{
-		// タップを離したときの処理
 	}
 
 	/**
@@ -163,8 +171,8 @@ public class BallRoot : MonoBehaviour,ITap
 		if (obj == null) {
 			return false;
 		}
-//		return (obj.tag == "GreenBall" || obj.tag == "RedBall" || obj.tag == "BlueBall" || obj.tag == "PurpleBall" || obj.tag == "YellowBall");
-		return (obj.tag == "GreenBall" || obj.tag == "RedBall" || obj.tag == "BlueBall" || obj.tag == "PurpleBall" || obj.tag == "YellowBall");
+		int puzzleID = obj.GetComponent<BallControl> ().PuzzleID;
+		return (puzzleID >= 0 && puzzleID < 5 );
 	}
 
 	bool IsAvailableTag(GameObject obj)
@@ -172,7 +180,9 @@ public class BallRoot : MonoBehaviour,ITap
 		if (obj == null) {
 			return false;
 		}
-		return (obj.tag == lastKeepBall.tag);
+		int puzzleID = obj.GetComponent<BallControl> ().PuzzleID;
+		int lastKeepBallID = lastKeepBall.GetComponent<BallControl> ().PuzzleID;
+		return (puzzleID == lastKeepBallID);
 	}
 
 	bool IsAvailableDistance(GameObject obj)
