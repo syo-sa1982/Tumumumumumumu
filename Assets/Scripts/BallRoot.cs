@@ -88,7 +88,6 @@ public class BallRoot : MonoBehaviour
 	 */
 	private void OnTapDown()
 	{
-		isTaped = true;
 
 		// Rayのレイヤー対象設定
 //		int layerMask = 1 << LAYER_PUZZLE;
@@ -97,12 +96,11 @@ public class BallRoot : MonoBehaviour
 		Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
 
 		if (aCollider2d) {
-
-			GameObject obj = aCollider2d.transform.gameObject;
+			isTaped = true;
+//			GameObject obj = aCollider2d.transform.gameObject;
 			RaycastHit2D hit = Physics2D.Raycast (aTapPoint, -Vector2.up);
 
 			AddHitObject (hit);
-			isTaped = true;
 		}
 	}
 	/**
@@ -117,7 +115,7 @@ public class BallRoot : MonoBehaviour
 
 		if (aCollider2d) {
 
-			GameObject obj = aCollider2d.transform.gameObject;
+//			GameObject obj = aCollider2d.transform.gameObject;
 			RaycastHit2D hit = Physics2D.Raycast (aTapPoint, -Vector2.up);
 
 			AddHitObject (hit);
@@ -131,6 +129,14 @@ public class BallRoot : MonoBehaviour
 	private void OnTapUp()
 	{
 		Debug.Log("############ タップ終了 ############");
+		if (keepBalls.Count >= 3)
+		{
+			for (int i = 0; i < keepBalls.Count; i++)
+			{
+				keepBalls[i].SendMessage("TappedDestroy");
+			}
+			PrepareBalls(keepBalls.Count);
+		}
 		isTaped = false;
 		lastKeepBall = null;
 		keepBalls.Clear();
@@ -145,22 +151,10 @@ public class BallRoot : MonoBehaviour
 				&& (lastKeepBall == null 
 					|| (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
 			{
-
-				Debug.Log("############ ヒット ############");
-				Debug.Log("hit object is " + hitObject.GetInstanceID());
-				Debug.Log("hit PuzzleID is " + hitObject.GetComponent<BallControl>().PuzzleID);
-
 				lastKeepBall = hitObject;
 				keepBalls.Add(hitObject);
-
-				Debug.Log("lastKeepBall is " + lastKeepBall);
-				Debug.Log("keepBalls is " + keepBalls.Count);
-
 			}
-
-
 		}
-
 	}
 
 	/**

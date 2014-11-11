@@ -47,6 +47,7 @@ public class BallControl : MonoBehaviour
 
 	void TappedDestroy()
 	{
+		Debug.Log ("TappedDestroy");
 		Destroy(gameObject);
 	}
 }
