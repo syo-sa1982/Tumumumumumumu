@@ -20,6 +20,9 @@ public class BallRoot : MonoBehaviour
 
 	private bool isTaped = false; // タップ中かどうかの判定
 
+	[SerializeField]
+	private LineRenderer deleteLine;
+
 	// カウントダウン用
 	int waitingTime = 30;
 	private float timer;
@@ -61,6 +64,8 @@ public class BallRoot : MonoBehaviour
 		if(Input.GetMouseButtonUp(0)){
 			OnTapUp();
 		}
+
+		DrawLine ();
 	}
 
 
@@ -97,7 +102,7 @@ public class BallRoot : MonoBehaviour
 
 		if (aCollider2d) {
 			isTaped = true;
-//			GameObject obj = aCollider2d.transform.gameObject;
+
 			RaycastHit2D hit = Physics2D.Raycast (aTapPoint, -Vector2.up);
 
 			AddHitObject (hit);
@@ -128,7 +133,9 @@ public class BallRoot : MonoBehaviour
 	 */
 	private void OnTapUp()
 	{
-		Debug.Log("############ タップ終了 ############");
+		// ラインレンダラー消します
+		deleteLine.SetVertexCount (0);
+
 		if (keepBalls.Count >= 3)
 		{
 			for (int i = 0; i < keepBalls.Count; i++)
@@ -142,6 +149,20 @@ public class BallRoot : MonoBehaviour
 		keepBalls.Clear();
 	}
 
+	private void DrawLine()
+	{
+		// パズルの数だけまわす
+		for(int i = 0; i < keepBalls.Count; i++)
+		{
+			// 子の座標を取得
+			Vector3 puzzle_position = keepBalls[i].transform.position;
+
+			// 座標をそろえていく
+			deleteLine.SetPosition (i,puzzle_position + (Vector3.forward * -1));
+			//	// NOTE: 手前に出すためちょっと前にだす
+
+		}
+	}
 
 	public void AddHitObject (RaycastHit2D hit)
 	{
@@ -152,6 +173,15 @@ public class BallRoot : MonoBehaviour
 					|| (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
 			{
 				lastKeepBall = hitObject;
+
+				// ラインを伸ばす
+				deleteLine.SetVertexCount (keepBalls.Count + 1);	// 要素数を揃える
+				// 座標を更新
+				deleteLine.SetPosition (
+					keepBalls.Count,
+					hitObject.transform.position + (Vector3.forward * -1)	// NOTE: 手前にだす為、まえにちょっと出す
+				);
+
 				keepBalls.Add(hitObject);
 			}
 		}
