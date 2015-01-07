@@ -36,9 +36,7 @@ public class BallRoot : MonoBehaviour
 	{
 		PrepareBalls (ballNum);
 		while(true){
-
 			yield return new WaitForSeconds(1f);
-
 		}
 	}
 
