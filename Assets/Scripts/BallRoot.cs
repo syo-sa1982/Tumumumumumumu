@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,7 +10,8 @@ public class BallRoot : MonoBehaviour
 
 	public float distance = 10; // Rayの届く距離
 
-
+	private int score = 0;
+	public GameObject scoreText;
 
 	public GameObject ballPrefab;
 
@@ -29,6 +31,7 @@ public class BallRoot : MonoBehaviour
 
 	void Start()
 	{
+		scoreText.GetComponent<Text> ().text = score.ToString();
 		StartCoroutine (PuzzleMake());
 	}
 
@@ -93,7 +96,7 @@ public class BallRoot : MonoBehaviour
 	{
 
 		// Rayのレイヤー対象設定
-//		int layerMask = 1 << LAYER_PUZZLE;
+		int layerMask = 1 << LAYER_PUZZLE;
 
 		Vector3 aTapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
@@ -140,6 +143,9 @@ public class BallRoot : MonoBehaviour
 			{
 				keepBalls[i].SendMessage("TappedDestroy");
 			}
+			score += (keepBalls.Count * 100);
+			Debug.Log (score);
+			scoreText.GetComponent<Text> ().text = score.ToString();
 			PrepareBalls(keepBalls.Count);
 		}
 		isTaped = false;
