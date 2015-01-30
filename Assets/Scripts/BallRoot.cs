@@ -10,9 +10,6 @@ public class BallRoot : MonoBehaviour
 
 	public float distance = 10; // Rayの届く距離
 
-	private int score = 0;
-	public GameObject scoreText;
-
 	public GameObject ballPrefab;
 
 	private GameObject lastKeepBall; // 最後になぞったボール
@@ -29,9 +26,13 @@ public class BallRoot : MonoBehaviour
 	int waitingTime = 30;
 	private float timer;
 
+	// スコア制御
+	private Text scoreText;
+	private ScoreTextLabel scoreTextLabel;
+	private int score;
+
 	void Start()
 	{
-		scoreText.GetComponent<Text> ().text = score.ToString();
 		StartCoroutine (PuzzleMake());
 	}
 
@@ -134,6 +135,9 @@ public class BallRoot : MonoBehaviour
 	 */
 	private void OnTapUp()
 	{
+		scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
+		scoreTextLabel = GameObject.Find ("ScoreText").GetComponent<ScoreTextLabel> ();
+
 		// ラインレンダラー消します
 		deleteLine.SetVertexCount (0);
 
@@ -143,9 +147,10 @@ public class BallRoot : MonoBehaviour
 			{
 				keepBalls[i].SendMessage("TappedDestroy");
 			}
-			score += (keepBalls.Count * 100);
-			Debug.Log (score);
-			scoreText.GetComponent<Text> ().text = score.ToString();
+			scoreTextLabel.currentScore += (keepBalls.Count * 100);
+			scoreText.text = "SCORE:" + scoreTextLabel.currentScore;
+			Debug.Log ("OnTapUp");
+			Debug.Log (scoreText.text);
 			PrepareBalls(keepBalls.Count);
 		}
 		isTaped = false;

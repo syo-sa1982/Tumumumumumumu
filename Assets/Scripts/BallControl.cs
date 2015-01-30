@@ -26,9 +26,6 @@ public class BallControl : MonoBehaviour
 		this.PuzzleID = Random.Range (0, 5);
 		string spriteName = SPRITE_NAME + this.PuzzleID;
 
-		Debug.Log (this.PuzzleID);
-		Debug.Log (spriteName);
-
 		Sprite sp = GetSprite(FILE_NAME, spriteName);
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();
 		sr.sprite = sp;
