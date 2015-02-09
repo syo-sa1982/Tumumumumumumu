@@ -22,6 +22,8 @@ public class BallRoot : MonoBehaviour
 	[SerializeField]
 	private LineRenderer deleteLine;
 
+	GameStatus gameStatus = new GameStatus ();
+
 	// カウントダウン用
 	int waitingTime = 30;
 	private float timer;
@@ -47,7 +49,8 @@ public class BallRoot : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-//		Debug.Log (timer);
+		Debug.Log ("Time from Root");
+		Debug.Log (gameStatus.Time);
 
 		if (timer > waitingTime) {
 			//Action
