@@ -23,7 +23,7 @@ public class GameStatus : MonoBehaviour
 		set { this.score = value; } 
 	}
 
-	vond Start()
+	void Start()
 	{
 	}
 
