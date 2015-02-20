@@ -25,13 +25,19 @@ public class BallRoot : MonoBehaviour
 	GameStatus gameStatus = new GameStatus ();
 
 	// カウントダウン用
-	int waitingTime = 30;
-	private float timer;
+	int waitingTime = 300;
+	public Text timerText;
+	private int timer;
 
 	// スコア制御
-	private Text scoreText;
-	private ScoreTextLabel scoreTextLabel;
+	public Text scoreText;
 	private int score;
+
+	void Awake()
+	{
+		score = 0;
+		timer = 300;
+	}
 
 	void Start()
 	{
@@ -42,6 +48,7 @@ public class BallRoot : MonoBehaviour
 	{
 		PrepareBalls (ballNum);
 		while(true){
+
 			yield return new WaitForSeconds(1f);
 		}
 	}
@@ -52,14 +59,14 @@ public class BallRoot : MonoBehaviour
 		Debug.Log ("Time from Root");
 		Debug.Log (gameStatus.Time);
 
-		if (timer > waitingTime) {
-			//Action
-//			Debug.Log ("時間切れ");
-
-		} else {
-			timer += Time.deltaTime;
-		}
-
+//		if (timer > waitingTime) {
+//			//Action
+////			Debug.Log ("時間切れ");
+//
+//		} else {
+//			timer += Time.deltaTime;
+//		}
+//
 		if(Input.GetMouseButtonDown(0)){
 			OnTapDown();
 		}
@@ -138,8 +145,6 @@ public class BallRoot : MonoBehaviour
 	 */
 	private void OnTapUp()
 	{
-		scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
-		scoreTextLabel = GameObject.Find ("ScoreText").GetComponent<ScoreTextLabel> ();
 
 		// ラインレンダラー消します
 		deleteLine.SetVertexCount (0);
@@ -150,8 +155,8 @@ public class BallRoot : MonoBehaviour
 			{
 				keepBalls[i].SendMessage("TappedDestroy");
 			}
-			scoreTextLabel.currentScore += (keepBalls.Count * 100);
-			scoreText.text = "SCORE:" + scoreTextLabel.currentScore;
+			score += (keepBalls.Count * 100);
+			scoreText.text = "SCORE:" + score;
 			Debug.Log ("OnTapUp");
 			Debug.Log (scoreText.text);
 			PrepareBalls(keepBalls.Count);
