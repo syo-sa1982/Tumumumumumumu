@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,8 +9,6 @@ public class BallRoot : MonoBehaviour
 	private const int MATCH_NUM	= 3;	// 3個以上で消える
 
 	public float distance = 10; // Rayの届く距離
-
-
 
 	public GameObject ballPrefab;
 
@@ -23,9 +22,25 @@ public class BallRoot : MonoBehaviour
 	[SerializeField]
 	private LineRenderer deleteLine;
 
+	GameStatus gameStatus = new GameStatus ();
+
 	// カウントダウン用
-	int waitingTime = 30;
-	private float timer;
+	public Text timerText;
+	private int time;
+
+	// スコア制御
+	public Text scoreText;
+	private int score;
+
+	void Awake()
+	{
+		score = 0;
+		time = 300;
+
+		scoreText.text = "SCORE:" + score;
+		timerText.text = "TIME:" + time;
+
+	}
 
 	void Start()
 	{
@@ -36,7 +51,11 @@ public class BallRoot : MonoBehaviour
 	{
 		PrepareBalls (ballNum);
 		while(true){
-
+			if (time > 0) {
+				time--;
+				Debug.Log (time);
+				timerText.text = "TIME:" + time;
+			}
 			yield return new WaitForSeconds(1f);
 
 		}
@@ -45,15 +64,6 @@ public class BallRoot : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-//		Debug.Log (timer);
-
-		if (timer > waitingTime) {
-			//Action
-//			Debug.Log ("時間切れ");
-
-		} else {
-			timer += Time.deltaTime;
-		}
 
 		if(Input.GetMouseButtonDown(0)){
 			OnTapDown();
@@ -95,7 +105,7 @@ public class BallRoot : MonoBehaviour
 	{
 
 		// Rayのレイヤー対象設定
-//		int layerMask = 1 << LAYER_PUZZLE;
+		int layerMask = 1 << LAYER_PUZZLE;
 
 		Vector3 aTapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		Collider2D aCollider2d = Physics2D.OverlapPoint(aTapPoint);
@@ -133,6 +143,7 @@ public class BallRoot : MonoBehaviour
 	 */
 	private void OnTapUp()
 	{
+
 		// ラインレンダラー消します
 		deleteLine.SetVertexCount (0);
 
@@ -142,6 +153,8 @@ public class BallRoot : MonoBehaviour
 			{
 				keepBalls[i].SendMessage("TappedDestroy");
 			}
+			score += (keepBalls.Count * 100);
+			scoreText.text = "SCORE:" + score;
 			PrepareBalls(keepBalls.Count);
 		}
 		isTaped = false;
