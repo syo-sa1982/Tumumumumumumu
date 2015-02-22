@@ -25,9 +25,8 @@ public class BallRoot : MonoBehaviour
 	GameStatus gameStatus = new GameStatus ();
 
 	// カウントダウン用
-	int waitingTime = 300;
 	public Text timerText;
-	private int timer;
+	private int time;
 
 	// スコア制御
 	public Text scoreText;
@@ -36,7 +35,11 @@ public class BallRoot : MonoBehaviour
 	void Awake()
 	{
 		score = 0;
-		timer = 300;
+		time = 300;
+
+		scoreText.text = "SCORE:" + score;
+		timerText.text = "TIME:" + time;
+
 	}
 
 	void Start()
@@ -48,25 +51,20 @@ public class BallRoot : MonoBehaviour
 	{
 		PrepareBalls (ballNum);
 		while(true){
-
+			if (time > 0) {
+				time--;
+				Debug.Log (time);
+				timerText.text = "TIME:" + time;
+			}
 			yield return new WaitForSeconds(1f);
+
 		}
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-		Debug.Log ("Time from Root");
-		Debug.Log (gameStatus.Time);
 
-//		if (timer > waitingTime) {
-//			//Action
-////			Debug.Log ("時間切れ");
-//
-//		} else {
-//			timer += Time.deltaTime;
-//		}
-//
 		if(Input.GetMouseButtonDown(0)){
 			OnTapDown();
 		}
@@ -157,8 +155,6 @@ public class BallRoot : MonoBehaviour
 			}
 			score += (keepBalls.Count * 100);
 			scoreText.text = "SCORE:" + score;
-			Debug.Log ("OnTapUp");
-			Debug.Log (scoreText.text);
 			PrepareBalls(keepBalls.Count);
 		}
 		isTaped = false;
