@@ -10,7 +10,20 @@ public class BallControl : MonoBehaviour
 	[SerializeField]
 	private int spriteID = 0;
 
-	public int PuzzleID {
+	[SerializeField]
+	public int uniqueID = 0;
+
+	public int UniqueID {
+		get
+		{
+			return uniqueID; 
+		}
+		set {
+			uniqueID = value;
+		}
+	}
+
+	public int SpriteID {
 		get
 		{
 			return spriteID; 
@@ -23,8 +36,8 @@ public class BallControl : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		this.PuzzleID = Random.Range (0, 5);
-		string spriteName = SPRITE_NAME + this.PuzzleID;
+		this.SpriteID = Random.Range (0, 5);
+		string spriteName = SPRITE_NAME + this.SpriteID;
 
 		Sprite sp = GetSprite(FILE_NAME, spriteName);
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();

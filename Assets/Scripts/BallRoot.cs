@@ -22,8 +22,6 @@ public class BallRoot : MonoBehaviour
 	[SerializeField]
 	private LineRenderer deleteLine;
 
-	GameStatus gameStatus = new GameStatus ();
-
 	// カウントダウン用
 	public Text timerText;
 	private int time;
@@ -53,11 +51,9 @@ public class BallRoot : MonoBehaviour
 		while(true){
 			if (time > 0) {
 				time--;
-				Debug.Log (time);
 				timerText.text = "TIME:" + time;
 			}
 			yield return new WaitForSeconds(1f);
-
 		}
 	}
 
@@ -91,6 +87,7 @@ public class BallRoot : MonoBehaviour
 		Vector3 position = ballPrefab.transform.position;
 		position.x = Random.Range(position.x - 1.2f, position.x + 1.2f);
 		position.y = Random.Range(position.y - 1.0f, position.y + 1.3f);
+		ballPrefab.GetComponent<BallControl> ().UniqueID = number;
 		Instantiate(ballPrefab, position, ballPrefab.transform.rotation);
 
 		// numberが０になるまで再帰
@@ -182,6 +179,7 @@ public class BallRoot : MonoBehaviour
 		if (hit) {
 			GameObject hitObject = hit.collider.gameObject;
 			if (IsBall(hitObject) 
+				&& IsOverlapBall(hitObject)
 				&& (lastKeepBall == null 
 					|| (lastKeepBall != hitObject && IsAvailableTag(hitObject) && IsAvailableDistance(hitObject))))
 			{
@@ -189,6 +187,8 @@ public class BallRoot : MonoBehaviour
 
 				// ラインを伸ばす
 				deleteLine.SetVertexCount (keepBalls.Count + 1);	// 要素数を揃える
+
+				Debug.Log(keepBalls.Count);
 				// 座標を更新
 				deleteLine.SetPosition (
 					keepBalls.Count,
@@ -208,8 +208,8 @@ public class BallRoot : MonoBehaviour
 		if (obj == null) {
 			return false;
 		}
-		int puzzleID = obj.GetComponent<BallControl> ().PuzzleID;
-		return (puzzleID >= 0 && puzzleID < 5 );
+		int spriteID = obj.GetComponent<BallControl> ().SpriteID;
+		return (spriteID >= 0 && spriteID < 5 );
 	}
 
 	bool IsAvailableTag(GameObject obj)
@@ -217,8 +217,8 @@ public class BallRoot : MonoBehaviour
 		if (obj == null) {
 			return false;
 		}
-		int puzzleID = obj.GetComponent<BallControl> ().PuzzleID;
-		int lastKeepBallID = lastKeepBall.GetComponent<BallControl> ().PuzzleID;
+		int puzzleID = obj.GetComponent<BallControl> ().SpriteID;
+		int lastKeepBallID = lastKeepBall.GetComponent<BallControl> ().SpriteID;
 		return (puzzleID == lastKeepBallID);
 	}
 
@@ -229,6 +229,24 @@ public class BallRoot : MonoBehaviour
 		}
 		float distance = Vector3.Distance(obj.transform.position, lastKeepBall.transform.position);
 		return distance < 1.0f;
+	}
+
+	// 重複チェック
+	bool IsOverlapBall(GameObject obj)
+	{
+		if (obj == null) {
+			return false;
+		}
+
+		for(int i = 0; i < keepBalls.Count; i++)
+		{
+			int keepUniqueID = keepBalls[i].GetComponent<BallControl> ().UniqueID;
+			int touchUniqueID = obj.GetComponent<BallControl> ().UniqueID;
+
+			if (keepUniqueID == touchUniqueID) { return false; }
+		}
+
+		return true;
 	}
 
 
