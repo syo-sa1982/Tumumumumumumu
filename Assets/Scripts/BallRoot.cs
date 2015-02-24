@@ -30,13 +30,24 @@ public class BallRoot : MonoBehaviour
 	public Text scoreText;
 	private int score;
 
+	[SerializeField]
+	Animator gameOver;
+
+	[SerializeField]
+	GameObject gameOverText;
+
+
+
 	void Awake()
 	{
 		score = 0;
-		time = 300;
+		time = 5;
 
 		scoreText.text = "SCORE:" + score;
 		timerText.text = "TIME:" + time;
+
+		gameOverText = GameObject.Find ("/Canvas/GameOver");
+		gameOver = gameOverText.GetComponent<Animator> ();
 
 	}
 
@@ -52,6 +63,9 @@ public class BallRoot : MonoBehaviour
 			if (time > 0) {
 				time--;
 				timerText.text = "TIME:" + time;
+			} else {
+				// ゲームオーバー
+				gameOver.SetBool ("IsGameOver", true);
 			}
 			yield return new WaitForSeconds(1f);
 		}
@@ -60,18 +74,30 @@ public class BallRoot : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		if (time > 0) {
 
-		if(Input.GetMouseButtonDown(0)){
-			OnTapDown();
-		}
-		if(Input.GetMouseButton(0)){
-			OnTapDrag();
-		}
-		if(Input.GetMouseButtonUp(0)){
-			OnTapUp();
-		}
+			if (Input.GetMouseButtonDown (0)) {
+				OnTapDown ();
+			}
+			if (Input.GetMouseButton (0)) {
+				OnTapDrag ();
+			}
+			if (Input.GetMouseButtonUp (0)) {
+				OnTapUp ();
+			}
 
-		DrawLine ();
+			DrawLine ();
+		} else {
+
+			if(Input.GetMouseButtonDown(0)){}
+			if(Input.GetMouseButton(0)){}
+			if (Input.GetMouseButtonUp (0)) {
+				// ゲームオーバー
+				gameOver.SetBool ("IsGameOver", false);
+
+				Application.LoadLevel ("Title");
+			}
+		}
 	}
 
 
